@@ -1,4 +1,7 @@
 from abc import ABC, abstractmethod
+from menu import menu
+import os
+from time import sleep
 
 
 class Conta(ABC):
@@ -166,13 +169,42 @@ class BancoFacade:
     def autenticar(self, cliente: Pessoa, conta: Conta):
         if self.banco.autenticar(cliente, conta):
             if cliente.conta == conta:
-                print(f'{cliente} autenticado com sucesso!')
-                return True
-        print(
-            f'Nao foi possivel autenticar o cliente {cliente}\n'
-            'Pois a conta informada nao pertence a ele!'
-            )
-        return False
+                MN = [
+                    '1-Sacar',
+                    '2-Depositar',
+                    '3-Sair'
+                ]
+                sistema = True
+                while sistema:
+                    menu.titulos(f'{cliente} autenticado com sucesso!')
+                    menu.menu(MN)
+                    menu.linhas()
+                    opcao = menu.ler_inteiro('Escolha o que deseja fazer >> ')
+                    menu.linhas()
+                    os.system('cls')
+
+                    if opcao == 1:
+                        menu.titulos('SAQUE')
+                        valor = menu.ler_inteiro('Qual o valor do saque? ')
+                        cliente.conta.sacar(valor)
+
+                    elif opcao == 2:
+                        menu.titulos('DEPOSITO')
+                        valor = menu.ler_inteiro('Qual o valor do deposito? ')
+                        cliente.conta.depositar(valor)
+
+                    elif opcao == 3:
+                        menu.titulos('Finalizando...')
+                        sleep(1)
+                        sistema = False
+
+                    elif opcao not in range(1, 3):
+                        print('Por favor digite uma opcao valida')
+        else:
+            print(
+                f'Nao foi possivel autenticar o cliente {cliente}\n'
+                'Pois a conta informada nao pertence a ele!'
+                )
 
 
 # MAIN
@@ -201,24 +233,4 @@ if __name__ == '__main__':
     f_facade.adicionar_contas([conta1, conta2, conta3])
 
     # Autentica cliente1
-    if f_facade.autenticar(cliente1, conta1):
-        cliente1.conta.depositar(600)
-        cliente1.conta.sacar(2100)
-        cliente1.conta.sacar(50)
-        print()
-    # Autentica cliente2
-    if f_facade.autenticar(cliente2, conta2):
-        cliente2.conta.depositar(600)
-        cliente2.conta.sacar(50)
-        cliente2.conta.sacar(1000)
-        cliente2.conta.sacar(50)
-        cliente2.conta.sacar(50)
-        print()
-    # Autentica cliente3
-    if f_facade.autenticar(cliente3, conta3):
-        cliente3.conta.depositar(600)
-        cliente3.conta.sacar(50)
-        cliente3.conta.sacar(1000)
-        cliente3.conta.sacar(50)
-        cliente3.conta.sacar(50)
-        print()
+    f_facade.autenticar(cliente1, conta1)
